@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fine-tune"
+  short_description: "Interview the owner and improve project guidance"
+  default_prompt: "Use $fine-tune to interview me about this project, one question at a time, then incorporate our decisions into its documentation."
