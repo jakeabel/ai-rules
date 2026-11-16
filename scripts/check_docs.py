@@ -31,10 +31,20 @@ def markdown_files(root):
     return sorted(path for path in root.rglob("*.md") if ".git" not in path.parts)
 
 
+OVERLAY_DIRS = ("ai-engineering-standards", ".ai/standards")  # project overlay: first one that exists
+
+
+def overlay_dir(root):
+    for name in OVERLAY_DIRS:
+        if (root / name).is_dir():
+            return root / name
+    return root / OVERLAY_DIRS[0]
+
+
 def project_docs(root):
     names = ["AGENTS.md", "CLAUDE.md", "GROK.md", "README.md"]
     docs = [root / name for name in names]
-    overlay = root / "ai-engineering-standards"
+    overlay = overlay_dir(root)
     if overlay.is_dir():
         docs.extend(markdown_files(overlay))
     index = root / "docs" / "README.md"
@@ -96,15 +106,16 @@ def main(argv):
 
     for root in projects:
         agents = root / "AGENTS.md"
-        if agents.is_file() and "](ai-engineering-standards/README.md)" not in agents.read_text(encoding="utf-8"):
-            errors.append(f"{agents.name}: missing link to ai-engineering-standards/README.md")
+        overlay_rel = overlay_dir(root).relative_to(root).as_posix()
+        if agents.is_file() and f"]({overlay_rel}/README.md)" not in agents.read_text(encoding="utf-8"):
+            errors.append(f"{agents.name}: missing link to {overlay_rel}/README.md")
         for name in ("CLAUDE.md", "GROK.md"):
             entry = root / name
             if entry.is_file() and "](AGENTS.md)" not in entry.read_text(encoding="utf-8"):
                 errors.append(f"{name}: missing link to AGENTS.md")
-        overlay_index = root / "ai-engineering-standards" / "README.md"
+        overlay_index = overlay_dir(root) / "README.md"
         if overlay_index.is_file() and "](~/.ai/README.md)" not in overlay_index.read_text(encoding="utf-8"):
-            errors.append("ai-engineering-standards/README.md: missing link to ~/.ai/README.md")
+            errors.append(f"{overlay_rel}/README.md: missing link to ~/.ai/README.md")
 
     home_index = (home_guide / "README.md").resolve()
     warnings = []
@@ -114,7 +125,7 @@ def main(argv):
         if doc.resolve() not in referenced:
             warnings.append(f"{doc}: not referenced from any checked doc")
     for root in projects:
-        overlay = root / "ai-engineering-standards"
+        overlay = overlay_dir(root)
         if not overlay.is_dir():
             continue
         project_index = (overlay / "README.md").resolve()
