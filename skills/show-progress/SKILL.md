@@ -1,11 +1,11 @@
 ---
-name: breakdown
-description: "Show progress on a project checklist (default: Catalyst's database split) as a table: each major phase with done, open and percent complete, the overall percentage, and what is still open. Use for /breakdown, 'how far along are we', 'show the migration progress', or 'percentage complete'."
+name: show-progress
+description: "Show progress on a project checklist (default: Catalyst's database split) as a table: each major phase with done, open and percent complete, the overall percentage, and what is still open. Use for /show-progress, 'how far along are we', 'show the migration progress', or 'percentage complete'."
 user-invocable: true
 argument-hint: "[section name, default 'Database split']"
 ---
 
-# Breakdown
+# Show progress
 
 Report how far a checklist in a project's `.ai/todo.md` has got, phase by phase. Read-only: change no file, tick nothing.
 
@@ -13,11 +13,11 @@ Report how far a checklist in a project's `.ai/todo.md` has got, phase by phase.
 
 1. Work from the project root (Catalyst: `~/Projects/catalyst`). The section is the argument, matched case-insensitively
    against the todo's top-level `# ` headings; with no argument it is `Database split`. If it matches nothing, run
-   `python3 ~/.ai/skills/breakdown/breakdown.py --list-sections` and ask which one.
+   `python3 ~/.ai/skills/show-progress/breakdown.py --list-sections` and ask which one.
 2. Get the numbers from the script, never by counting by hand:
 
    ```bash
-   python3 ~/.ai/skills/breakdown/breakdown.py --section "<section>"
+   python3 ~/.ai/skills/show-progress/breakdown.py --section "<section>"
    ```
 
    Each `## ` heading in the section is a phase. Only top-level checklist items count: `- [x]` done, `- [ ]` and
